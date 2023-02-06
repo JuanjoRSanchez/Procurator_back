@@ -3,7 +3,6 @@ package com.example.procurator.service;
 import com.example.procurator.DTOClasses.CollectiveDTO;
 import com.example.procurator.Repository.CollectiveRepository;
 import com.example.procurator.Repository.UserRepository;
-import com.example.procurator.exception.AlreadyExistException;
 import com.example.procurator.exception.NoFoundException;
 import com.example.procurator.model.Collective;
 import com.example.procurator.model.User;
@@ -26,29 +25,25 @@ public class CollectiveService {
 
     public List<Collective> getAllCollectivesByUserId(Integer userId){
         User user = userRepository.findById( Long.valueOf(userId)).orElseThrow();
-        if (user != null){
-            return collectiveRepository.findAllCollectivesByUser(user).orElseThrow();
-        }else {
-            throw new NoFoundException("No collective founds exists.");
-        }
+        return collectiveRepository.findAllCollectivesByUser(user).orElseThrow();
     }
 
     public List<Collective> getAllCollectivesByUserEmail(String userEmail){
         User user = userRepository.findByEmail(userEmail).orElseThrow();
-        if (user != null){
-            return collectiveRepository.findAllCollectivesByUser(user).orElseThrow();
-        }else {
-            throw new NoFoundException("No collective founds exists.");
+        List<Collective> list = collectiveRepository.findAllCollectivesByUser(user).orElseThrow();
+        if(list.isEmpty()){
+            throw new NoFoundException("At this moment you don't have any collective yet");
         }
+        return collectiveRepository.findAllCollectivesByUser(user).orElseThrow();
     }
+
     public Collective getCollectiveByName(String collectiveName) {
         boolean team = collectiveRepository.findByName(collectiveName).isEmpty();
         if(team)
             throw new NoFoundException("The team in not in the DataBase: " + collectiveName);
             return collectiveRepository.findByName(collectiveName).get();
-
-
     }
+
     public Collective getCollectiveByNameAndUserEmail(CollectiveDTO collectiveDTO) {
         User user = userRepository.findByEmail(collectiveDTO.getEmail()).orElseThrow();
 
@@ -67,6 +62,21 @@ public class CollectiveService {
             collectiveRepository.save(team);
         }
         return  collectiveRepository.findByName(collectiveDTO.getName()).orElseThrow();
+    }
+
+    public HttpStatus setCollectiveByCollectiveNameAndUserEmail(CollectiveDTO collectiveDTO){
+        User userModel = userRepository.findByEmail(collectiveDTO.getEmail()).orElseThrow();
+        if (userModel.getEmail().equals(collectiveDTO.getEmail())){
+            Collective team = new Collective();
+            team.setName(collectiveDTO.getName());
+            team.setUser(userModel);
+            team.setCreationDate(new Date());
+            collectiveRepository.save(team);
+        }
+        if(getCollectiveByNameAndUserEmail(collectiveDTO).getName().isEmpty()){
+            return HttpStatus.SERVICE_UNAVAILABLE ;
+        }
+        return  HttpStatus.CREATED;
     }
 
     public Map<String, Boolean> deleteCollectiveByNameAndUserEmail(CollectiveDTO collectiveDTO) throws RuntimeException {

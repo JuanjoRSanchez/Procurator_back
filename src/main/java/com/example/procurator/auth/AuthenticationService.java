@@ -7,6 +7,7 @@ import com.example.procurator.model.User;
 import com.example.procurator.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -84,12 +85,11 @@ public class AuthenticationService {
                 )
         );
         var user = service.getUserByEmail(request.getEmail());
-        System.out.println(user.getPhone());
         var jwtToken = jwtService.generateToken(user);
-        System.out.println(jwtToken);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .userName(user.getName())
+                .status(HttpStatus.OK)
                 .build();
     }
 
@@ -118,6 +118,7 @@ public class AuthenticationService {
         return count >= 3;
         */
     } // TODO
+
     public boolean roleValidates(String role ) {
         if(role.equals(Role.ADMIN.name()) || role.equals(Role.MANAGER.name()) || role.equals(Role.PLAYER.name())){
             return true;
