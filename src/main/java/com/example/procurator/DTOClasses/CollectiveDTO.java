@@ -12,6 +12,10 @@ public class CollectiveDTO {
 
     private String name;
 
+    private String newName;
+
+    private int idCollective;
+
     private int userId;
 
     private String email;

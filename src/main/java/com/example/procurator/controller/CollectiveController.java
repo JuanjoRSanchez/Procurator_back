@@ -43,13 +43,18 @@ public class CollectiveController {
     }
 
     @PostMapping("/addCollective")
-    @Secured("MANAGER")
-    public ResponseEntity<HttpStatus>  setCollective(@RequestBody CollectiveDTO collectiveDTO){
-        return ResponseEntity.ok(collectiveService.setCollectiveByCollectiveNameAndUserEmail(collectiveDTO));
+    public ResponseEntity<HttpStatus>  setCollective01(@RequestBody CollectiveDTO collectiveDTO){
+        return ResponseEntity.ok(collectiveService.setCollectiveByCollectiveNameAndUserEmail01(collectiveDTO));
     }
+
+    @PutMapping("/updateCollective")
+    public ResponseEntity<Collective>  updateCollective(@RequestBody CollectiveDTO collectiveDTO){
+        return ResponseEntity.ok(collectiveService.updateCollective(collectiveDTO));
+    }
+
     @DeleteMapping
-    @Secured("MANAGER")
-    public ResponseEntity<Map<String, Boolean>>  deleteCollective(@RequestBody CollectiveDTO CollectiveDTO){
-        return ResponseEntity.ok(collectiveService.deleteCollectiveByNameAndUserEmail(CollectiveDTO));
+    public ResponseEntity<Collective>  deleteCollective01(@RequestBody CollectiveDTO CollectiveDTO){
+        return ResponseEntity.ok(collectiveService.deleteCollectiveByNameAndUserEmail01(CollectiveDTO));
     }
+
 }

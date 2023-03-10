@@ -70,6 +70,8 @@ public class AuthenticationService {
             service.saveUser(user);
             var jwtToken = jwtService.generateToken(user);
             return AuthenticationResponse.builder()
+                    .userName(user.getName())
+                    .status(HttpStatus.OK)
                     .token(jwtToken)
                     .build();
         }else{

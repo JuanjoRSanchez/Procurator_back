@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class UserService {
@@ -26,6 +28,10 @@ public class UserService {
 
     }
 */
+
+    public List<User> getAllUsers() {
+        return repository.findAll();
+    }
     public User getUserByEmail(String email){
         return repository.findByEmail(email).orElseThrow();
     }

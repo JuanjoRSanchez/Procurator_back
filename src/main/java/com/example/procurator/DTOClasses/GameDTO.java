@@ -11,18 +11,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class GameDTO {
 
-    private int gameId;
-
-    private int whiteScore;
-
-    private int blackScore;
-
     private int collectiveId;
 
-    private String collectiveGame;
-
     private LocalDateTime dateMatch;
-
-    private int userId;
 
 }
