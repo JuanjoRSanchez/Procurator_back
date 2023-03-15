@@ -24,6 +24,7 @@ public class CollectiveService {
 
     private final UserService userService;
 
+
     public List<Collective> getAllCollectivesByUserId(Integer userId){
         User user = userRepository.findById( Long.valueOf(userId)).orElseThrow();
         return collectiveRepository.findAllCollectivesByUser(user).orElseThrow();
@@ -31,7 +32,7 @@ public class CollectiveService {
 
     public List<Collective> getAllCollectivesByUserEmail(String userEmail){
         User user = userRepository.findByEmail(userEmail).orElseThrow();
-        List<Collective> list = collectiveRepository.findAllCollectivesByUser(user).orElseThrow();
+        // List<Collective> list = collectiveRepository.findAllCollectivesByUser(user).orElseThrow();
         /*
         if(list.isEmpty()){
             throw new NoFoundException("At this moment you don't have any collective yet");

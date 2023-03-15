@@ -15,12 +15,7 @@ import java.util.List;
 @CrossOrigin(origins="http://localhost:3000", allowCredentials =  "true")
 public class GameController {
     private final GameService gameService;
-/*
-    @GetMapping("/getGames/{collectiveId}")
-    public List<Game> getGamesByCollectiveId(@PathVariable int collectiveId){
-        return gameService.getGamesByCollectiveId(collectiveId);
-    }
- */
+
     @GetMapping("/getGames/{collectiveId}")
     public ResponseEntity<List<Game>> getGamesByCollectiveId(@PathVariable int collectiveId){
         return ResponseEntity.ok().body(gameService.getGamesByCollectiveId(collectiveId));
@@ -36,9 +31,8 @@ public class GameController {
         return ResponseEntity.ok().body(gameService.updateGame(game));
     }
 
-    @DeleteMapping("/deleteGame")
-    public boolean deleteGame(@RequestBody GameDTO gameDTO){
-        return true;
+    @DeleteMapping("/deleteGame/{idGame}")
+    public ResponseEntity<Game> deleteGame(@PathVariable int idGame){
+        return ResponseEntity.ok().body(gameService.deleteGame(idGame));
     }
-
 }

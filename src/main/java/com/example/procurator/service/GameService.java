@@ -49,17 +49,24 @@ public class GameService {
     }
 
     public Game updateGame(Game game){
-        Game gameaux = gameRepository.findById(game.getId()).orElseThrow();
-        gameaux.setBlackScore(game.getBlackScore());
-        gameaux.setWhiteScore(game.getWhiteScore());
-        gameaux.setDateMatch(game.getDateMatch());
+        Game gameaux = gameRepository.findById(Long.valueOf(game.getId())).orElseThrow();
+        if (game.getDateMatch() != null){
+            gameaux.setDateMatch(game.getDateMatch());
+        }
+        if (game.getWhiteScore() >= 0){
+            gameaux.setWhiteScore(game.getWhiteScore());
+        }
+        if(game.getBlackScore() >= 0){
+            gameaux.setBlackScore(game.getBlackScore());
+        }
         gameRepository.save(gameaux);
         return null;
     }
 
-    public boolean deleteGame(int game_id){
-        Game game = gameRepository.findById(Long.valueOf(game_id)).orElseThrow();
+    public Game deleteGame(int game_id){
+        Game game = gameRepository.findById(Long.valueOf(game_id))
+                .orElseThrow(() -> new RuntimeException("Game not found :: " + game_id));
         gameRepository.delete(game);
-        return true;
+        return game;
     }
 }

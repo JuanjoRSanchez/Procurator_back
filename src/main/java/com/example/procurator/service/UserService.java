@@ -61,4 +61,11 @@ public class UserService {
         }
         return true;
     }
+
+    // Services for User wich role is PLAYER
+    public User getUserIfPlayerByGame(int gamEId){
+        return null;
+    }
+
+
 }

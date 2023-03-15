@@ -26,7 +26,10 @@ public class CollectiveController {
         Collective collectiveByNameFoundByName = collectiveService.getCollectiveByName(collectiveName);
         return ResponseEntity.ok().body(collectiveByNameFoundByName);
     }
-
+    @GetMapping("/getCollectivesByUserEmail/{userEmail}")
+    public ResponseEntity<List<Collective>>  getCollectivesByUserEmail(@PathVariable String userEmail){
+        return ResponseEntity.ok().body(collectiveService.getAllCollectivesByUserEmail(userEmail));
+    }
     @GetMapping("/getAll/{userId}")
     public ResponseEntity<List<Collective>>  getAllCollectivesByUser(@PathVariable Integer userId){
         return ResponseEntity.ok().body(collectiveService.getAllCollectivesByUserId(userId));

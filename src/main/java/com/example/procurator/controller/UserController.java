@@ -15,12 +15,6 @@ public class UserController {
 
     private final UserRepository repository;
 
-    /*
-    @GetMapping("/{userName}")
-    public User getUserByName(@PathVariable String userName){
-        return repository.findByName(userName).orElseThrow();
-    }*/
-
     @GetMapping("/{userName}")
     public ResponseEntity<User> getUserByName(@PathVariable String userName){
         return ResponseEntity.ok(repository.findByName(userName).orElseThrow());
