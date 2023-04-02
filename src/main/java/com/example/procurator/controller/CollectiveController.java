@@ -55,9 +55,16 @@ public class CollectiveController {
         return ResponseEntity.ok(collectiveService.updateCollective(collectiveDTO));
     }
 
-    @DeleteMapping
-    public ResponseEntity<Collective>  deleteCollective01(@RequestBody CollectiveDTO CollectiveDTO){
-        return ResponseEntity.ok(collectiveService.deleteCollectiveByNameAndUserEmail01(CollectiveDTO));
+    @DeleteMapping("/deleteCollective")
+    public ResponseEntity<Collective>  deleteCollective01(@RequestBody CollectiveDTO collectiveDTO){
+        return ResponseEntity.ok(collectiveService.deleteCollectiveByNameAndUserEmail02(collectiveDTO));
     }
 
+
+    /*
+    @DeleteMapping("/deleteCollective")
+    public ResponseEntity<Collective>  deleteCollective01(@RequestBody CollectiveDTO collectiveDTO){
+        return ResponseEntity.status(collectiveService.deleteCollectiveByNameAndUserEmail02(c));
+    }
+*/
 }

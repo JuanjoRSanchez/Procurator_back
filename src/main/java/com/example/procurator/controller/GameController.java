@@ -18,6 +18,7 @@ public class GameController {
 
     @GetMapping("/getGames/{collectiveId}")
     public ResponseEntity<List<Game>> getGamesByCollectiveId(@PathVariable int collectiveId){
+        System.out.println("///////////////////////////////");
         return ResponseEntity.ok().body(gameService.getGamesByCollectiveId(collectiveId));
     }
     @PostMapping("/addGame")
@@ -27,7 +28,6 @@ public class GameController {
 
     @PutMapping("/update")
     public ResponseEntity<Game> updateGame(@RequestBody Game game){
-
         return ResponseEntity.ok().body(gameService.updateGame(game));
     }
 

@@ -1,5 +1,6 @@
 package com.example.procurator.model;
 
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,9 +8,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.Set;
 
 @Entity
-@Table(name = "_collective")
+@Table(name = "collective")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,4 +31,6 @@ public class Collective {
     @Column
     private String name;
 
+    @OneToMany(mappedBy = "collective")
+    private Set<User> users;
 }

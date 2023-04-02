@@ -12,11 +12,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "_player")*/
 public class Player extends User{
 
-   /* @OneToOne
-    private final Role role = new Role(ERole.PLAYER);
-*/
-    @OneToOne
-    private User user;
+    @Enumerated(EnumType.STRING)
+    private  Role role;
 
     @OneToOne
     private Collective collective;

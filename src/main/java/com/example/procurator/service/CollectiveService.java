@@ -94,5 +94,14 @@ public class CollectiveService {
         return team ;
     }
 
+    public Collective deleteCollectiveByNameAndUserEmail02(CollectiveDTO collectiveDTO) throws RuntimeException {
+        User user = userService.getUserByEmail(collectiveDTO.getEmail());
+        Collective team =  collectiveRepository.findByNameAndUser(collectiveDTO.getName(), user).orElseThrow();
+        System.out.println("////////////////////////////////////");
+        System.out.println(team);
+        collectiveRepository.delete(team);
+        return team ;
+    }
+
 
 }

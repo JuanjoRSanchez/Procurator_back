@@ -6,6 +6,8 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "game")
@@ -34,5 +36,13 @@ public class Game {
     @Column
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm")
     private LocalDateTime dateMatch;
+
+    @OneToMany(mappedBy = "game",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private Set<Game_Player> game_players = new HashSet<>();
+
+
+
 
 }

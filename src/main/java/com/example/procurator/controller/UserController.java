@@ -6,6 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
+
 @RestController
 @RequestMapping(path ="/api/v1/users")
 @RequiredArgsConstructor
@@ -23,5 +27,18 @@ public class UserController {
     @GetMapping
     public ResponseEntity<User> getUser(){
         return ResponseEntity.ok(repository.findByEmail("javi@gmail.com").orElseThrow());
+    }
+/*
+    @GetMapping("/getByGameId/{gameId}")
+    public List<User> getByGameId(@PathVariable int gameId){
+        List<User> listUsers = repository.getUsersFromGame(Long.valueOf(gameId));
+        return listUsers;
+    }
+
+ */
+    @PostMapping("/addPlayer")
+    public ResponseEntity<User> addUserPlayer(@RequestBody User user){
+        user.setCreationDate(new Timestamp(new Date().getTime()));
+        return ResponseEntity.ok(repository.save(user));
     }
 }

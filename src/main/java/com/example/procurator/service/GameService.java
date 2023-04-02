@@ -64,9 +64,17 @@ public class GameService {
     }
 
     public Game deleteGame(int game_id){
+        Game game = gameRepository.findById(Long.valueOf(game_id)).orElseThrow();
+        gameRepository.delete(game);
+        return game;
+    }
+
+    /*
+      public Game deleteGame(int game_id){
         Game game = gameRepository.findById(Long.valueOf(game_id))
                 .orElseThrow(() -> new RuntimeException("Game not found :: " + game_id));
         gameRepository.delete(game);
         return game;
     }
+     */
 }

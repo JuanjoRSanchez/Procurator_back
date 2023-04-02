@@ -2,6 +2,7 @@ package com.example.procurator.service;
 
 import com.example.procurator.Repository.UserRepository;
 import com.example.procurator.exception.AlreadyExistException;
+import com.example.procurator.model.Game;
 import com.example.procurator.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,10 +63,15 @@ public class UserService {
         return true;
     }
 
-    // Services for User wich role is PLAYER
-    public User getUserIfPlayerByGame(int gamEId){
+    public User addPlayerToGame(User user){
+
         return null;
     }
 
-
+    public User deletePlayerById(int idPlayer){
+        User user = repository.findById(Long.valueOf(idPlayer))
+                .orElseThrow(() -> new RuntimeException("Game not found :: " + idPlayer));
+        repository.delete(user);
+        return user;
+    }
 }
