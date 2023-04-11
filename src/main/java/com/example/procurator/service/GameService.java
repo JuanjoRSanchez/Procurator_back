@@ -7,11 +7,9 @@ import com.example.procurator.Repository.UserRepository;
 import com.example.procurator.exception.AlreadyExistException;
 import com.example.procurator.model.Collective;
 import com.example.procurator.model.Game;
-import com.example.procurator.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;

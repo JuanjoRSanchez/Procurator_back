@@ -65,7 +65,7 @@ public class AuthenticationService {
                 .age(request.getAge())
                 .creationDate(new Timestamp(new Date().getTime()))
                 .build();
-        boolean checkIfExists = service.checkIfUserExist(user);
+        boolean checkIfExists = service.checkIfUserDontExist(user);
         if(checkIfExists) {
             service.saveUser(user);
             var jwtToken = jwtService.generateToken(user);

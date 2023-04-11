@@ -32,12 +32,7 @@ public class CollectiveService {
 
     public List<Collective> getAllCollectivesByUserEmail(String userEmail){
         User user = userRepository.findByEmail(userEmail).orElseThrow();
-        // List<Collective> list = collectiveRepository.findAllCollectivesByUser(user).orElseThrow();
-        /*
-        if(list.isEmpty()){
-            throw new NoFoundException("At this moment you don't have any collective yet");
-        }
-        */
+
         return collectiveRepository.findAllCollectivesByUser(user).orElseThrow();
     }
 
@@ -56,7 +51,7 @@ public class CollectiveService {
         );
     }
 
-    public HttpStatus setCollectiveByCollectiveNameAndUserEmail01(CollectiveDTO collectiveDTO){
+    public HttpStatus setCollectiveByCollectiveNameAndUserEmail(CollectiveDTO collectiveDTO){
         User userModel = userRepository.findByEmail(collectiveDTO.getEmail()).orElseThrow();
         boolean collectiveExists = collectiveRepository.findByNameAndUser(collectiveDTO.getName(), userModel).isPresent();
         if (collectiveExists) {
@@ -82,24 +77,15 @@ public class CollectiveService {
             collective.setName(collectiveDTO.getNewName());
             collectiveRepository.save(collective);
         }
+
         return collective;
     }
 
-    public Collective deleteCollectiveByNameAndUserEmail01(CollectiveDTO collectiveDTO) throws RuntimeException {
-        User user = userService.getUserByEmail(collectiveDTO.getEmail());
-        Collective team =  collectiveRepository.findByNameAndUser(collectiveDTO.getName(), user)
-                .orElseThrow(() -> new RuntimeException("Team not found for this name :: " + collectiveDTO.getName()));
-        collectiveRepository.delete(team);
-
-        return team ;
-    }
-
-    public Collective deleteCollectiveByNameAndUserEmail02(CollectiveDTO collectiveDTO) throws RuntimeException {
+    public Collective deleteCollectiveByNameAndUserEmail(CollectiveDTO collectiveDTO) throws RuntimeException {
         User user = userService.getUserByEmail(collectiveDTO.getEmail());
         Collective team =  collectiveRepository.findByNameAndUser(collectiveDTO.getName(), user).orElseThrow();
-        System.out.println("////////////////////////////////////");
-        System.out.println(team);
         collectiveRepository.delete(team);
+
         return team ;
     }
 

@@ -17,6 +17,7 @@ public class NoFoundException extends RuntimeException{
     }
 
     public NoFoundException(String message) {
+
         this.message = message;
     }
 }

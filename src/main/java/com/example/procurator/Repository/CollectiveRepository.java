@@ -10,7 +10,6 @@ import java.util.Optional;
 
 public interface CollectiveRepository extends JpaRepository<Collective, Long> {
 
-
     Optional<Collective> findByName(String teamName);
 
     Optional <List<Collective>> findAllCollectivesByUser(User user);

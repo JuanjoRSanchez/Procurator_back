@@ -16,7 +16,6 @@ import java.util.List;
 @CrossOrigin(origins="http://localhost:3000", allowCredentials =  "true")
 
 public class UserController {
-
     private final UserRepository repository;
 
     @GetMapping("/{userName}")
@@ -28,14 +27,7 @@ public class UserController {
     public ResponseEntity<User> getUser(){
         return ResponseEntity.ok(repository.findByEmail("javi@gmail.com").orElseThrow());
     }
-/*
-    @GetMapping("/getByGameId/{gameId}")
-    public List<User> getByGameId(@PathVariable int gameId){
-        List<User> listUsers = repository.getUsersFromGame(Long.valueOf(gameId));
-        return listUsers;
-    }
 
- */
     @PostMapping("/addPlayer")
     public ResponseEntity<User> addUserPlayer(@RequestBody User user){
         user.setCreationDate(new Timestamp(new Date().getTime()));

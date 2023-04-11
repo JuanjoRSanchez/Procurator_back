@@ -11,7 +11,5 @@ import java.util.Optional;
 @Repository
 public interface GameRepository extends JpaRepository<Game, Long> {
 
-     List<Game> findAllByCollectiveNameAndCollective(Long collectiveId, Long userId);
-
      List<Game> findAllByCollectiveId(Long collectiveId);
 }

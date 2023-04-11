@@ -7,11 +7,9 @@ import com.example.procurator.service.CollectiveService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/v1/collectives")
@@ -47,7 +45,7 @@ public class CollectiveController {
 
     @PostMapping("/addCollective")
     public ResponseEntity<HttpStatus>  setCollective01(@RequestBody CollectiveDTO collectiveDTO){
-        return ResponseEntity.ok(collectiveService.setCollectiveByCollectiveNameAndUserEmail01(collectiveDTO));
+        return ResponseEntity.ok(collectiveService.setCollectiveByCollectiveNameAndUserEmail(collectiveDTO));
     }
 
     @PutMapping("/updateCollective")
@@ -57,7 +55,7 @@ public class CollectiveController {
 
     @DeleteMapping("/deleteCollective")
     public ResponseEntity<Collective>  deleteCollective01(@RequestBody CollectiveDTO collectiveDTO){
-        return ResponseEntity.ok(collectiveService.deleteCollectiveByNameAndUserEmail02(collectiveDTO));
+        return ResponseEntity.ok(collectiveService.deleteCollectiveByNameAndUserEmail(collectiveDTO));
     }
 
 

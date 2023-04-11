@@ -4,6 +4,7 @@ import com.example.procurator.DTOClasses.FieldDTO;
 import com.example.procurator.model.Field;
 import com.example.procurator.service.FieldService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,13 +18,13 @@ public class FieldController {
     private final FieldService fieldService;
 
     @GetMapping("/getAllFields")
-    public List<Field> getAllFields(){
-        return fieldService.getAllFields();
+    public ResponseEntity<List<Field>> getAllFields(){
+        return ResponseEntity.ok(fieldService.getAllFields());
     }
 
     @GetMapping("/{fieldName}")
-    public Field getFieldByName(@PathVariable String fieldName){
-        return fieldService.getFieldByName(fieldName);
+    public ResponseEntity<Field> getFieldByName(@PathVariable String fieldName){
+        return ResponseEntity.ok(fieldService.getFieldByName(fieldName));
     }
 
     @PostMapping
