@@ -4,6 +4,7 @@ package com.example.procurator.Repository;
 import com.example.procurator.model.Collective;
 import com.example.procurator.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,5 +16,7 @@ public interface CollectiveRepository extends JpaRepository<Collective, Long> {
     Optional <List<Collective>> findAllCollectivesByUser(User user);
 
     Optional<Collective> findByNameAndUser(String name, User user);
+
+    Optional<Collective> findByUser(User user);
 
 }

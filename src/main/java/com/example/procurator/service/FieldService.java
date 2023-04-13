@@ -15,9 +15,23 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class FieldService {
-
-    private final CollectiveRepository collectiveRepository;
+    private final CollectiveService collectiveService;
     private final FieldRepository fieldRepository;
+
+    public Field getFieldById(String fieldId){
+        Field field = fieldRepository.findById(Long.parseLong(fieldId)).orElseThrow(
+                () -> new NoFoundException("No filed found.")
+        );
+        return field;
+    }
+    public List<Field> getFieldByCollectiveId(String collectiveId){
+        Collective collective = collectiveService.getCollectiveById(collectiveId);
+        List<Field> fieldList = fieldRepository.findByCollective(collective).orElseThrow(
+                () -> new NoFoundException("No fields found.")
+        );
+        System.out.println(fieldList);
+        return fieldList;
+    }
 
     public Field getFieldByName(String fieldName){
         boolean fieldExists = fieldRepository.findByName(fieldName).isEmpty();
@@ -28,34 +42,44 @@ public class FieldService {
         }
     }
 
-    public boolean setField(FieldDTO fieldDTO){
-        boolean salida = false;
-        Collective collective = collectiveRepository.findByName(fieldDTO.getCollectiveName()).orElseThrow();
-        if (collective.getName().length() > 0){
-            var field = Field.builder()
-                    .name(fieldDTO.getName())
-                    .phone(fieldDTO.getPhone())
-                    .address(fieldDTO.getAddress())
-                    .collective(collective)
-                    .contactPhone(fieldDTO.getContactPhone())
-                    .build();
-            fieldRepository.save(field);
-            salida = true;
-        }
-        return true;
+    public Field setField(FieldDTO fieldDTO){
+        Collective collective = collectiveService.getCollectiveById(fieldDTO.getCollectiveId());
+        var field = Field.builder()
+                .name(fieldDTO.getName())
+                .phone(fieldDTO.getPhone())
+                .address(fieldDTO.getAddress())
+                .collective(collective)
+                .contactPhone(fieldDTO.getContactPhone())
+                .build();
+        fieldRepository.save(field);
+        return field;
+
+
     }
 
     public List<Field> getAllFields(){
         return fieldRepository.findAll();
     }
 
-    public boolean deleteField(FieldDTO fieldDTO){
-        boolean fieldExists = fieldRepository.findByPhone(fieldDTO.getPhone()).isPresent();
-        if(fieldExists){
-            var field = fieldRepository.findByPhone(fieldDTO.getPhone()).orElseThrow();
-            fieldRepository.delete(field);
-            return  true;
+    public Field updateField(FieldDTO fieldDTO) {
+        var field = getFieldById(fieldDTO.getId());
+        if (fieldDTO.getName() != null){
+            field.setName(fieldDTO.getName());
         }
-        return false;
+        if (fieldDTO.getAddress() != null) {
+            field.setAddress(fieldDTO.getAddress());
+        }
+        if (fieldDTO.getContactPhone() != null){
+            field.setContactPhone(fieldDTO.getContactPhone());
+        }
+        fieldRepository.save(field);
+        return null;
     }
+    public Field deleteField(String fieldId){
+        var field =  getFieldById(fieldId);
+        fieldRepository.delete(field);
+        return  field;
+    }
+
+
 }

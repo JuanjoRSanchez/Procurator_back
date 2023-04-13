@@ -23,37 +23,63 @@ import java.util.List;
 @Service
 public class PlayerService {
 
-    private final UserRepository userRepository;
-
     private final UserService userService;
 
-    private final CollectiveRepository collectiveRepository;
+    private final CollectiveService collectiveService;
 
     private final Game_PlayerRepository game_playerRepository;
 
-    private final GameRepository gameRepository;
+    private final GameService gameService;
 
     private final PasswordEncoder passwordEncoder;
 
 
-    public PlayerService(UserRepository userRepository, UserService userService, CollectiveRepository collectiveRepository, Game_PlayerRepository game_playerRepository, GameRepository gameRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
+    public PlayerService(UserService userService,
+                         GameService gameService,
+                         Game_PlayerRepository game_playerRepository,
+                         PasswordEncoder passwordEncoder,
+                         CollectiveService collectiveService
+                         ) {
         this.userService = userService;
-        this.collectiveRepository = collectiveRepository;
+        this.gameService = gameService;
         this.game_playerRepository = game_playerRepository;
-        this.gameRepository = gameRepository;
         this.passwordEncoder = passwordEncoder;
+        this.collectiveService = collectiveService;
     }
 
+
     public List<PlayerGameDTO> getPlayersByCollectiveId(int idCollective){
+        Collective collective = collectiveService.getCollectiveById(String.valueOf(idCollective));
         List<PlayerGameDTO> listPlayers = game_playerRepository.getPlayersByCollectiveId(Long.valueOf(idCollective)).orElseThrow(
-                () ->  new NoFoundException("No collectives found"));
+                () ->  new NoFoundException("No players found"));
 
         return listPlayers;
     }
 
+    public List<PlayerGameDTO> getPlayersByGame(String idGame){
+        Game game = gameService.getById(idGame);
+        List<PlayerGameDTO> listPlayers = game_playerRepository.getPlayersByGame(Long.valueOf(idGame)).orElseThrow(
+                () -> new NoFoundException("No players found for this game"));
+
+        return listPlayers;
+    }
+
+    public List<PlayerGameDTO> getPlayersAddedToGame(@PathVariable String idGame){
+        Game game = gameService.getById(idGame);
+        List<PlayerGameDTO> listPlayers = game_playerRepository.getPlayersAddedToGame(Long.valueOf(idGame)).orElseThrow(
+                () -> new NoFoundException("No players added to this game")
+        );
+        return listPlayers;
+    }
+
+    public List<PlayerGameDTO> getPlayersNotAddedToGame(String idGame, String idCollective){
+        Game game = gameService.getById(idGame);
+        List<PlayerGameDTO> listPlayers = game_playerRepository.getPlayersNotAddedToGame((Long.parseLong(idGame)), Long.parseLong(idCollective)).orElseThrow(
+                () -> new NoFoundException("No players added to this game"));
+        return listPlayers;
+    }
     public User addPlayerToCollective(PlayerToCollective playerToCollective){
-        Collective collective = collectiveRepository.findById(Long.valueOf(playerToCollective.getIdCollective())).orElseThrow();
+        Collective collective = collectiveService.getCollectiveById(String.valueOf(playerToCollective.getIdCollective()));
         User player = playerToCollective.getPlayer();
         var user = User.builder()
                 .name(player.getName())
@@ -67,70 +93,37 @@ public class PlayerService {
                 .creationDate(new Timestamp(new Date().getTime()))
                 .collective(collective)
                 .build();
-        if(userRepository.findByEmail(playerToCollective.getPlayer().getEmail()).isEmpty() && collective != null){
-            userService.saveUser(user);
-        }
-        return player;
+        userService.saveUser(user);
+
+        return user;
     }
 
     public Game_Player addPlayerToGame(PlayerToGameDTO playerToGameDTO){
-        Game game = gameRepository.findById(Long.valueOf(playerToGameDTO.getGame_id())).orElseThrow();
-        User user = userRepository.findById(Long.valueOf(playerToGameDTO.getPlayer_id())).orElseThrow();
-        System.out.println(user);
-        Game_Player game_playerTest = game_playerRepository.
-                getPlayerForGameByBothIds(Long.valueOf(playerToGameDTO.getGame_id()), Long.valueOf(playerToGameDTO.getPlayer_id()))
-                .orElseThrow(() -> new RuntimeException("No player found for this game"));
-        if (game_playerTest == null){
-            if(game != null && user != null){
-                Game_Player game_player = new Game_Player();
-                game_player.setGame(game);
-                game_player.setUser(user);
-                game_player.setAddedToGame(playerToGameDTO.isAddedToGame());
-                game_playerRepository.save(game_player);
-                return game_player;
-            }
-        }
-        return game_playerTest;
+        Game game = gameService.getById(playerToGameDTO.getGame_id());
+        User user = userService.getById(playerToGameDTO.getPlayer_id());
+
+        Game_Player game_player = new Game_Player();
+        game_player.setGame(game);
+        game_player.setUser(user);
+        game_player.setAddedToGame(playerToGameDTO.isAddedToGame());
+        game_playerRepository.save(game_player);
+        return game_player;
     }
 
-    public List<PlayerGameDTO> getPlayersByGame(int IdGame){
-        List<PlayerGameDTO> listPlayers = game_playerRepository.getPlayersByGame(Long.valueOf(IdGame)).orElseThrow(
-                () -> new NoFoundException("No players found for this game"));
 
-        return listPlayers;
-    }
-
-    public List<PlayerGameDTO> getPlayersAddedToGame(@PathVariable int gameId){
-        List<PlayerGameDTO> listPlayers = game_playerRepository.getPlayersAddedToGame(Long.valueOf(gameId)).orElseThrow(
-                () -> new NoFoundException("No players added to this game")
-        );
-        return listPlayers;
-    }
-
-    public List<PlayerGameDTO> getPlayersNotAddedToGame(String idGame, String idCollective){
-        List<PlayerGameDTO> listPlayers = game_playerRepository.getPlayersNotAddedToGame1((Long.parseLong(idGame)), Long.parseLong(idCollective)).orElseThrow(
-                () -> new NoFoundException("No players added to this game"));
-        return listPlayers;
-    }
 
     public Game_Player toConfirmPlayerInGame(@RequestBody PlayerToGameDTO playerToGameDTO){
         Game_Player game_player = game_playerRepository.
                 getPlayerForGameByBothIds(Long.valueOf(playerToGameDTO.getGame_id()), Long.valueOf(playerToGameDTO.getPlayer_id()))
-                .orElseThrow(() -> new ServiceException("111111"));
-        if(game_player != null){
-            game_player.setAddedToGame(playerToGameDTO.isAddedToGame());
-            game_playerRepository.save(game_player);
-        }
-        return game_player;
+                .orElseThrow(() -> new NoFoundException("Not found"));
+
+        game_player.setAddedToGame(playerToGameDTO.isAddedToGame());
+        return game_playerRepository.save(game_player);
     }
 
     public User toDisconfirmPlayerInGame(@RequestBody PlayerToGameDTO playerToGameDTO){
-        Game game = gameRepository.findById(Long.valueOf(playerToGameDTO.getGame_id())).orElseThrow(
-                () -> new NoFoundException("No game found by this ID")
-        );
-        User user = userRepository.findById(Long.valueOf(playerToGameDTO.getPlayer_id())).orElseThrow(
-                () -> new NoFoundException("No user found by this ID")
-        );
+        Game game = gameService.getById(playerToGameDTO.getGame_id());
+        User user = userService.getById(playerToGameDTO.getPlayer_id());
         if(game != null && user != null){
             Game_Player game_player = new Game_Player();
             game_player.setGame(game);
@@ -142,8 +135,7 @@ public class PlayerService {
     }
 
     public User updatePlayer(Player player){
-        User user = userRepository.findById(player.getId()).orElseThrow(
-                () -> new NoFoundException("User not found"));
+        User user = userService.getById(Math.toIntExact(player.getId()));
         user.setEmail(player.getEmail());
         user.setPassword(player.getPassword());
         user.setPhone(player.getPhone());
@@ -165,9 +157,8 @@ public class PlayerService {
     }
 
     public User deletePlayerFromCollective(int idPlayer){
-        User user = userRepository.findById(Long.valueOf(idPlayer))
-                .orElseThrow(() -> new ServiceException("Game not found :: " + idPlayer));
-        userRepository.delete(user);
+        User user = userService.getById(idPlayer);
+        userService.deleteUser(user);
         return user;
     }
 

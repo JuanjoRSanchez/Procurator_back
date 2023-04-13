@@ -2,6 +2,7 @@ package com.example.procurator.service;
 
 import com.example.procurator.Repository.UserRepository;
 import com.example.procurator.exception.AlreadyExistException;
+import com.example.procurator.exception.NoFoundException;
 import com.example.procurator.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,8 +13,21 @@ public class UserService {
 
     private final UserRepository repository;
 
+    public User getById(String id){
+        return repository.findById(Long.parseLong(id)).orElseThrow(
+                () -> new NoFoundException("User not fouund")
+        );
+    }
+
+    public User getById(int id){
+        return repository.findById(Long.valueOf(id)).orElseThrow(
+                () -> new NoFoundException("User not fouund")
+        );
+    }
     public User getUserByEmail(String email){
-        return repository.findByEmail(email).orElseThrow();
+        return repository.findByEmail(email).orElseThrow(
+                () -> new NoFoundException("User not found")
+        );
     }
 
     public User saveUser (User user){
@@ -38,6 +52,9 @@ public class UserService {
         return true;
     }
 
+    public void deleteUser(User user){
+        repository.delete(user);
+    }
 
 
 

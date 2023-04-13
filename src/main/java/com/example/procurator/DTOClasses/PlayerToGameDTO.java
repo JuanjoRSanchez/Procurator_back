@@ -13,7 +13,7 @@ public class PlayerToGameDTO {
 
     private int game_id;
 
-    private int collective_id;
+    private String collective_id;
 
     private boolean addedToGame;
 

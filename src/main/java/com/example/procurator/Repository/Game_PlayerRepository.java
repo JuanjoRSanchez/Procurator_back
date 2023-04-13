@@ -21,11 +21,8 @@ public interface Game_PlayerRepository extends JpaRepository<Game_Player, Long> 
     @Query(value = "SELECT u.id AS id, u.age AS age, u.creation_date AS creationDate, u.email AS email, u.name AS name, u.phone AS phone, u.active AS active, u.address AS address, u.role AS role, u.collective_id AS collective_id, u.password AS password FROM _user AS u JOIN game_player AS gp ON gp.user_id = u.id WHERE gp.game_id = ?1 AND gp.added_to_game = true", nativeQuery = true)
     Optional <List<PlayerGameDTO>> getPlayersAddedToGame(Long gameId);
 
-    @Query(value = "SELECT u.id AS id, u.age AS age, u.creation_date AS creationDate, u.email AS email, u.name AS name, u.phone AS phone, u.active AS active, u.address AS address, u.role AS role, u.collective_id AS collective_id, u.password AS password FROM _user AS u JOIN game_player AS gp ON gp.user_id = u.id WHERE gp.game_id = ?1 AND gp.added_to_game = false", nativeQuery = true)
-    List<PlayerGameDTO> getPlayersNotAddedToGame(Long gameId);
-
     @Query(value = "SELECT * FROM `_user` WHERE id NOT IN (SELECT user_id FROM game_player WHERE game_id = ?1) AND collective_id = ?2", nativeQuery = true)
-    Optional <List<PlayerGameDTO>> getPlayersNotAddedToGame1(Long gameId, Long collectiveId);
+    Optional <List<PlayerGameDTO>> getPlayersNotAddedToGame(Long gameId, Long collectiveId);
     @Query(value = "SELECT u.id AS id, u.age AS age, u.creation_date , u.email AS email, u.name AS name, u.phone AS phone, u.active AS active, u.address AS address, u.role AS role, u.collective_id AS collective_id, u.password AS password  FROM _user u WHERE u.role = 'PLAYER' AND u.collective_id = ?1", nativeQuery = true)
     Optional <List<PlayerGameDTO>> getPlayersByCollectiveId(Long collective_id);
 

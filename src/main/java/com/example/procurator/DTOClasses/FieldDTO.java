@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 public class FieldDTO {
 
-    private Long id;
+    private String id;
 
     private String name;
 
@@ -20,4 +20,6 @@ public class FieldDTO {
     private String contactPhone;
 
     private String collectiveName;
+
+    private String collectiveId;
 }

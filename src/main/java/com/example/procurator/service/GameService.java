@@ -5,6 +5,7 @@ import com.example.procurator.Repository.CollectiveRepository;
 import com.example.procurator.Repository.GameRepository;
 import com.example.procurator.Repository.UserRepository;
 import com.example.procurator.exception.AlreadyExistException;
+import com.example.procurator.exception.NoFoundException;
 import com.example.procurator.model.Collective;
 import com.example.procurator.model.Game;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,16 @@ public class GameService {
 
     private final CollectiveRepository collectiveRepository;
 
-    private final UserRepository userRepository;
+    public Game getById(String id){
+        return gameRepository.findById(Long.parseLong(id)).orElseThrow(
+                () -> new NoFoundException("Game not found")
+        );
+    }
+    public Game getById(int id){
+        return gameRepository.findById(Long.valueOf(id)).orElseThrow(
+                () -> new NoFoundException("Game not found")
+        );
+    }
 
     public List<Game> getGamesByCollectiveId(int collectiveId){
         Long collectiveIdL = Long.valueOf(collectiveId);
@@ -30,49 +40,43 @@ public class GameService {
         if (collectiveExists){
             return  gameRepository.findAllByCollectiveId(collectiveIdL);
         }
-        throw new AlreadyExistException("Collective not found.");
-
+        throw new NoFoundException("Collective not found.");
     }
-    public boolean setGame(GameDTO gameDTO){
-        Collective collective = collectiveRepository.findById(Long.valueOf(gameDTO.getCollectiveId())).orElseThrow();
+    public Game setGame(GameDTO gameDTO){
+        Collective collective = collectiveRepository.findById(Long.valueOf(gameDTO.getCollectiveId())).orElseThrow(
+                () -> new NoFoundException("Collective not found")
+        );
         LocalDateTime dateMatch = LocalDateTime.parse(String.valueOf(gameDTO.getDateMatch()));
-
         var game = Game.builder()
                 .creationDate(new Date())
                 .collective(collective)
                 .dateMatch(dateMatch)
                 .build();
-        gameRepository.save(game);
-        return true;
+
+        return gameRepository.save(game);
     }
 
-    public Game updateGame(Game game){
-        Game gameaux = gameRepository.findById(Long.valueOf(game.getId())).orElseThrow();
-        if (game.getDateMatch() != null){
-            gameaux.setDateMatch(game.getDateMatch());
+    public Game updateGame(GameDTO gameDTO){
+        Game gameAux = getById(gameDTO.getId());
+        if (gameDTO.getDateMatch() != null){
+            gameAux.setDateMatch(gameDTO.getDateMatch());
         }
-        if (game.getWhiteScore() >= 0){
-            gameaux.setWhiteScore(game.getWhiteScore());
+        if (gameDTO.getWhiteScore() >= 0){
+            gameAux.setWhiteScore(gameDTO.getWhiteScore());
         }
-        if(game.getBlackScore() >= 0){
-            gameaux.setBlackScore(game.getBlackScore());
+        if(gameDTO.getBlackScore() >= 0){
+            gameAux.setBlackScore(gameDTO.getBlackScore());
         }
-        gameRepository.save(gameaux);
-        return null;
+
+        return gameRepository.save(gameAux);
     }
 
     public Game deleteGame(int game_id){
-        Game game = gameRepository.findById(Long.valueOf(game_id)).orElseThrow();
+        Game game = gameRepository.findById(Long.valueOf(game_id)).orElseThrow(
+                () -> new NoFoundException("Game not found")
+        );
         gameRepository.delete(game);
         return game;
     }
 
-    /*
-      public Game deleteGame(int game_id){
-        Game game = gameRepository.findById(Long.valueOf(game_id))
-                .orElseThrow(() -> new RuntimeException("Game not found :: " + game_id));
-        gameRepository.delete(game);
-        return game;
-    }
-     */
 }

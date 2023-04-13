@@ -24,28 +24,19 @@ public class CollectiveService {
 
     private final UserService userService;
 
-
-    public List<Collective> getAllCollectivesByUserId(Integer userId){
-        User user = userRepository.findById( Long.valueOf(userId)).orElseThrow();
-        return collectiveRepository.findAllCollectivesByUser(user).orElseThrow();
+    public Collective getCollectiveById(String collectiveId) {
+        Collective collective = collectiveRepository.findById(Long.parseLong(collectiveId)).orElseThrow(
+                () -> new NoFoundException("Not collective found for this ID")
+        );
+        return collective;
     }
-
     public List<Collective> getAllCollectivesByUserEmail(String userEmail){
         User user = userRepository.findByEmail(userEmail).orElseThrow();
-
         return collectiveRepository.findAllCollectivesByUser(user).orElseThrow();
-    }
-
-    public Collective getCollectiveByName(String collectiveName) {
-        boolean team = collectiveRepository.findByName(collectiveName).isEmpty();
-        if(team)
-            throw new NoFoundException("The team in not in the DataBase: " + collectiveName);
-            return collectiveRepository.findByName(collectiveName).get();
     }
 
     public Collective getCollectiveByNameAndUserEmail(CollectiveDTO collectiveDTO) {
         User user = userRepository.findByEmail(collectiveDTO.getEmail()).orElseThrow();
-
         return collectiveRepository.findByNameAndUser(collectiveDTO.getName(), user ).orElseThrow(
                 () -> new NoFoundException("No Team present with name = " + collectiveDTO.getName())
         );
@@ -81,13 +72,9 @@ public class CollectiveService {
         return collective;
     }
 
-    public Collective deleteCollectiveByNameAndUserEmail(CollectiveDTO collectiveDTO) throws RuntimeException {
-        User user = userService.getUserByEmail(collectiveDTO.getEmail());
-        Collective team =  collectiveRepository.findByNameAndUser(collectiveDTO.getName(), user).orElseThrow();
-        collectiveRepository.delete(team);
-
-        return team ;
+    public void deleteCollectiveById(String collectiveId) {
+        Collective collective = getCollectiveById(collectiveId);
+        collectiveRepository.deleteById(Long.parseLong(collectiveId));
     }
-
 
 }
